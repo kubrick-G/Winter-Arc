@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+<title>Winter Arc — 90 Day Habit Tracker</title>
+<style>
+:root{--night:#0c1013;--steel:#151b20;--slate:#1e262c;--frost:#e4edf2;--ash:#7f8c95;--ice:#9fd6ea;--rim:#46535c;--cell:26px}
+*{box-sizing:border-box}
+body{margin:0;color:var(--frost);font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;font-size:16px;-webkit-font-smoothing:antialiased;
+ background:radial-gradient(ellipse at 50% -10%,#26333c 0,#0c1013 60%) fixed,var(--night)}
+.sheet{max-width:1240px;margin:20px auto;padding:30px 28px 38px;border:1px solid var(--rim);background:rgba(21,27,32,.85);box-shadow:0 0 0 4px var(--night),0 0 0 5px var(--rim),0 20px 60px rgba(0,0,0,.6)}
+header{text-align:center;margin-bottom:24px}
+.sigil{width:54px;height:54px;color:var(--ice);filter:drop-shadow(0 0 6px rgba(159,214,234,.5))}
+h1{margin:6px 0 0;font-family:Cinzel,"Trajan Pro",Georgia,serif;font-size:36px;font-weight:700;letter-spacing:.26em;padding-left:.26em;color:var(--frost);text-shadow:0 0 18px rgba(159,214,234,.35)}
+.sub{margin:8px 0 0;font-family:Cinzel,Georgia,serif;font-size:12px;letter-spacing:.42em;padding-left:.42em;color:var(--ice)}
+.motto{margin:14px 0 0;font-style:italic;font-size:17px;color:var(--ash)}
+.rule{display:flex;align-items:center;gap:12px;margin:16px auto 0;max-width:420px;color:var(--rim)}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:currentColor}
+.rule i{width:7px;height:7px;background:var(--ice);transform:rotate(45deg)}
+.banner{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--rim);background:var(--slate);margin-bottom:14px}
+.stat{padding:14px 18px;border-right:1px solid var(--rim)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:Cinzel,Georgia,serif;font-size:23px;font-weight:700;color:var(--frost)}
+.stat span{font-size:15px;color:var(--ash)}
+.bar{height:3px;background:#2c373f;margin-top:9px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#6fb4cc,var(--frost));box-shadow:0 0 8px rgba(159,214,234,.6);width:0;transition:width .3s}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+button.btn{font-family:Cinzel,Georgia,serif;font-size:12px;font-weight:600;letter-spacing:.08em;padding:11px 18px;border:1px solid var(--ice);background:var(--frost);color:var(--night);cursor:pointer}
+button.btn.ghost{background:transparent;color:var(--frost);border-color:var(--rim)}
+button.btn:hover{box-shadow:0 0 12px rgba(159,214,234,.45)}
+button.btn.ghost:hover{border-color:var(--ice)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ice);outline-offset:2px}
+.scroll{overflow-x:auto;padding-bottom:8px;margin-bottom:28px}
+.grid{display:grid;grid-template-columns:20px 170px repeat(30,minmax(var(--cell),1fr));gap:4px;min-width:1010px;align-items:center}
+.dn{font-family:Cinzel,Georgia,serif;font-size:10px;text-align:center;color:#b6c4cc;padding:3px 0;font-variant-numeric:tabular-nums}
+.dn.today{background:var(--ice);color:var(--night);font-weight:700;box-shadow:0 0 10px rgba(159,214,234,.7)}
+.dn.future{color:#51606a}
+.rn{font-family:Cinzel,Georgia,serif;font-size:11px;font-weight:600;text-align:right;padding-right:4px;color:var(--ice)}
+.name{width:100%;height:22px;border:1px solid var(--rim);padding:0 8px;font-family:inherit;font-size:15px;background:var(--night);color:var(--frost)}
+.name::placeholder{color:#58656e}
+.c{height:22px;border:1px solid var(--rim);background:var(--night);padding:0;cursor:pointer;position:relative;font:inherit}
+.c.on::after{content:"";position:absolute;inset:3px;background:var(--frost);box-shadow:0 0 6px rgba(228,237,242,.5)}
+.c.today{border:2px solid var(--ice);background:#1b2b33;box-shadow:0 0 10px rgba(159,214,234,.55);z-index:1}
+.c.today.first{box-shadow:0 -5px 10px -2px rgba(159,214,234,.55),0 0 10px rgba(159,214,234,.55)}
+.c.future{border-color:#262f35;background:#0f1418;cursor:not-allowed}
+.c.past{cursor:not-allowed}
+.c.past.miss{background:repeating-linear-gradient(135deg,#0c1013 0 3px,#1d262c 3px 4px);border-color:#2e3a42}
+.c.past.on{border-color:#8fa3ae}
+.c:disabled{opacity:1}
+dialog{border:1px solid var(--ice);background:var(--steel);color:var(--frost);padding:26px;max-width:380px;width:90%;box-shadow:0 0 30px rgba(159,214,234,.25)}
+dialog::backdrop{background:rgba(5,8,10,.8)}
+dialog h2{margin:0 0 10px;font-family:Cinzel,Georgia,serif;font-size:17px;letter-spacing:.06em}
+dialog p{margin:0 0 20px;font-size:17px;color:var(--ash);line-height:1.45}
+dialog .row{display:flex;gap:10px;justify-content:flex-end}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--frost);color:var(--night);font-size:16px;padding:10px 18px;border:1px solid var(--ice);opacity:0;pointer-events:none;transition:.2s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:700px){.sheet{margin:0;padding:16px;border:0;box-shadow:none}h1{font-size:26px}.banner{grid-template-columns:1fr}.stat{border-right:0;border-bottom:1px solid var(--rim)}.stat:last-child{border-bottom:0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="sheet">
+  <header>
+    <svg class="sigil" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+      <path d="M32 4v56M6 18l52 28M6 46l52-28"/>
+      <path d="M32 12l-5-5M32 12l5-5M32 52l-5 5M32 52l5 5M13 23h8M13 23l1-8M51 41h-8M51 41l-1 8M13 41h8M13 41l1 8M51 23h-8M51 23l-1-8"/>
+      <circle cx="32" cy="32" r="5" fill="currentColor"/>
+    </svg>
+    <h1>WINTER ARC</h1>
+    <p class="sub">90 DAY HABIT TRACKER</p>
+    <p class="motto">Winter is coming. Be ready.</p>
+    <div class="rule"><i></i></div>
+  </header>
+
+  <section class="banner" aria-live="polite">
+    <div class="stat"><b id="sDay">—</b><span id="sDayNote">Starts October 1</span></div>
+    <div class="stat"><b id="sToday">0%</b><span>Today's completion</span><div class="bar"><i id="bToday"></i></div></div>
+    <div class="stat"><b id="sAll">0%</b><span>Overall arc completion</span><div class="bar"><i id="bAll"></i></div></div>
+  </section>
+
+  <div class="actions">
+    <button class="btn" id="copyBtn">Copy today's progress for LinkedIn</button>
+    <button class="btn ghost" id="resetBtn">Reset today</button>
+  </div>
+
+  <div id="sections"></div>
+</main>
+
+<dialog id="dlg">
+  <h2>Reset today?</h2>
+  <p>This unchecks all of today's habits. Past days and your habit names stay as they are.</p>
+  <div class="row">
+    <button class="btn ghost" id="cancelReset">Cancel</button>
+    <button class="btn" id="confirmReset">Reset today</button>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var START_YEAR = 2026, KEY = 'winterArc.v1', HABITS = 10, DAYS = 90;
+  var DAY_MS = 1000*60*60*24;
+
+  function blank(){
+    var checks = [];
+    for (var h=0; h<HABITS; h++) checks.push(new Array(DAYS).fill(false));
+    return {names:new Array(HABITS).fill(''), checks:checks};
+  }
+  function load(){
+    try{
+      var s = JSON.parse(localStorage.getItem(KEY));
+      if (s && s.names && s.checks && s.checks.length===HABITS) return s;
+    }catch(e){}
+    return blank();
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  }
+  var state = load();
+
+  function dayIndex(){
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var start = new Date(START_YEAR, 9, 1);
+    return Math.floor(Math.round(today - start) / DAY_MS) + 1;
+  }
+  var today = dayIndex();
+
+  var secEl = document.getElementById('sections');
+  var cells = [];  // cells[h][d]
+  var dnEls = [];
+
+  function build(){
+    secEl.innerHTML = ''; cells = []; dnEls = [];
+    for (var h=0; h<HABITS; h++) cells.push([]);
+    for (var s=0; s<3; s++){
+      var wrap = document.createElement('div'); wrap.className = 'scroll';
+      var g = document.createElement('div'); g.className = 'grid';
+      g.appendChild(document.createElement('div')); g.appendChild(document.createElement('div'));
+      for (var i=0; i<30; i++){
+        var d = s*30+i;
+        var n = document.createElement('div'); n.className = 'dn'; n.textContent = d+1;
+        dnEls[d] = n; g.appendChild(n);
+      }
+      for (var h=0; h<HABITS; h++){
+        var rn = document.createElement('div'); rn.className = 'rn'; rn.textContent = h+1; g.appendChild(rn);
+        if (s===0 || true){
+          var inp = document.createElement('input');
+          inp.className = 'name'; inp.type = 'text'; inp.maxLength = 40;
+          inp.placeholder = 'Habit '+(h+1); inp.value = state.names[h];
+          inp.setAttribute('aria-label','Habit '+(h+1)+' name');
+          inp.dataset.h = h;
+          inp.addEventListener('input', onName);
+          g.appendChild(inp);
+        }
+        for (var i=0; i<30; i++){
+          var d2 = s*30+i;
+          var b = document.createElement('button');
+          b.type = 'button'; b.className = 'c';
+          b.dataset.h = h; b.dataset.d = d2;
+          b.addEventListener('click', onCell);
+          cells[h][d2] = b; g.appendChild(b);
+        }
+      }
+      wrap.appendChild(g); secEl.appendChild(wrap);
+    }
+  }
+
+  var nameInputs;
+  function onName(e){
+    var h = +e.target.dataset.h, v = e.target.value;
+    state.names[h] = v;
+    // keep the same habit's name in sync across the three sections
+    nameInputs.forEach(function(el){ if (+el.dataset.h===h && el!==e.target) el.value = v; });
+    save();
+  }
+  function onCell(e){
+    var b = e.currentTarget, h = +b.dataset.h, d = +b.dataset.d;
+    if (d+1 !== today) return;
+    state.checks[h][d] = !state.checks[h][d];
+    save(); paint();
+  }
+
+  function paint(){
+    for (var d=0; d<DAYS; d++){
+      var day = d+1;
+      var cls = day===today ? 'today' : (day>today ? 'future' : 'past');
+      dnEls[d].className = 'dn' + (cls==='today' ? ' today' : cls==='future' ? ' future' : '');
+      for (var h=0; h<HABITS; h++){
+        var b = cells[h][d], on = state.checks[h][d];
+        b.className = 'c ' + cls + (on ? ' on' : '') + (cls==='past' && !on ? ' miss' : '') + (cls==='today' && h===0 ? ' first' : '');
+        b.disabled = cls!=='today';
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        b.setAttribute('aria-label', 'Habit '+(h+1)+', day '+day+(on?', done':cls==='past'?', missed':''));
+      }
+    }
+    stats();
+  }
+
+  function counts(){
+    var t = 0, all = 0;
+    for (var h=0; h<HABITS; h++) for (var d=0; d<DAYS; d++) if (state.checks[h][d]){ all++; if (d+1===today) t++; }
+    return {today:t, all:all};
+  }
+  function stats(){
+    var c = counts();
+    var active = today>=1 && today<=DAYS;
+    var tp = active ? Math.round(c.today/HABITS*100) : 0;
+    var ap = Math.round(c.all/(HABITS*DAYS)*100);
+    var dayEl = document.getElementById('sDay'), note = document.getElementById('sDayNote');
+    if (today<1){ dayEl.textContent = 'Not started'; note.textContent = 'Starts October 1, '+START_YEAR+' · '+(1-today)+' day'+(today===0?'':'s')+' to go'; }
+    else if (today>DAYS){ dayEl.textContent = 'Arc complete'; note.textContent = 'All 90 days are done'; }
+    else { dayEl.textContent = 'Day '+today+' of '+DAYS; note.textContent = c.today+' of '+HABITS+' habits done today'; }
+    document.getElementById('sToday').textContent = tp+'%';
+    document.getElementById('sAll').textContent = ap+'%';
+    document.getElementById('bToday').style.width = tp+'%';
+    document.getElementById('bAll').style.width = ap+'%';
+  }
+
+  var toastEl = document.getElementById('toast'), tt;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(tt); tt = setTimeout(function(){ toastEl.classList.remove('show'); }, 2200);
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    if (today<1 || today>DAYS){ toast(today<1 ? 'The arc starts on October 1.' : 'The 90 days are over.'); return; }
+    var c = counts();
+    var done = [];
+    for (var h=0; h<HABITS; h++) if (state.checks[h][today-1]) done.push(state.names[h] || 'Habit '+(h+1));
+    var ap = Math.round(c.all/(HABITS*DAYS)*100);
+    var text = '❄️ Winter Arc — Day '+today+'/'+DAYS+': '+c.today+'/'+HABITS+' completed\n'
+      + (done.length ? '✅ '+done.join(' · ')+'\n' : '')
+      + '📈 Overall arc: '+ap+'% complete\n\n#WinterArc #90DayChallenge #Consistency';
+    function fallback(){
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      var ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta); toast(ok ? 'Copied to clipboard.' : 'Copy failed. Select and copy manually.');
+    }
+    if (navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(function(){ toast('Copied to clipboard.'); }, fallback);
+    } else fallback();
+  });
+
+  var dlg = document.getElementById('dlg');
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if (today<1 || today>DAYS){ toast('There is no active day to reset.'); return; }
+    dlg.showModal();
+  });
+  document.getElementById('cancelReset').addEventListener('click', function(){ dlg.close(); });
+  document.getElementById('confirmReset').addEventListener('click', function(){
+    if (today>=1 && today<=DAYS){
+      for (var h=0; h<HABITS; h++) state.checks[h][today-1] = false;
+      save(); paint(); toast("Today's checks cleared.");
+    }
+    dlg.close();
+  });
+
+  build();
+  nameInputs = Array.prototype.slice.call(document.querySelectorAll('.name'));
+  paint();
+
+  // Roll over to the next day automatically if the page stays open past midnight
+  setInterval(function(){
+    var d = dayIndex();
+    if (d !== today){ today = d; paint(); }
+  }, 60000);
+})();
+</script>
+</body>
+</html>
